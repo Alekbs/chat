@@ -19,7 +19,7 @@ def main(page: ft.Page):
                                 "Log in", on_click=lambda _: page.go("/store")
                             ),
                             ft.ElevatedButton(
-                                "Sign in", on_click=lambda _: page.go("/store")
+                                "Sign in", on_click=lambda _: page.go("/signin")
                             ),
                         ]
                     ),
@@ -27,6 +27,22 @@ def main(page: ft.Page):
                 ],
             )
         )
+        if page.route == "/signin":
+            page.views.append(
+                ft.View(
+                    "/signin",
+                    [
+                        ft.AppBar(title=ft.Text("Регистрация"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.AppBar(title=ft.Text("Вход"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.TextField(label="email"),
+                        ft.TextField(label="login"),
+                        ft.TextField(label="Password"),
+                        ft.ElevatedButton(
+                            "Confirm", on_click=lambda _: page.go("/login")
+                        ),
+                    ],
+                )
+            )
         if page.route == "/store":
             page.views.append(
                 ft.View(
