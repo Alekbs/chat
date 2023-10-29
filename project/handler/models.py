@@ -1,13 +1,14 @@
 from peewee import *
 
 #указываем базу данных
-db = SqliteDatabase('Users.db')
+db = SqliteDatabase("project/handler/chat.db")
 
 class BaseModel(Model):
     id = PrimaryKeyField(unique=True)
 
     class Meta:
-        database = dborder_by = 'id'
+        database = db
+        dborder_by = 'id'
 
 class User(BaseModel):
     login = CharField()
@@ -30,10 +31,10 @@ class Chat(BaseModel):
 
 class Message(BaseModel):
     id = PrimaryKeyField(unique=True)
-    user_from = CharField() # Связь с Users
+    user_from = CharField() 
     user_to = CharField() # Непонятное поле, сообщение должно принадлежать чату
-    chat_id = CharField() # Связь с Chats
-    message = CharField() #Текст сообщения
+    chat_id = CharField() 
+    message = CharField() 
     date_created = DateField()
     is_read = BooleanField() 
 
@@ -44,6 +45,10 @@ class Message(BaseModel):
 class UserChatLink(BaseModel):
     user_id = ForeignKeyField(User)
     chat_id = ForeignKeyField(Chat)
+    chat_name = ForeignKeyField(Chat)
+    chat_logo = ForeignKeyField(Chat)
+    last_msg = CharField()
+    unread_msg_count = IntegerField()
 
     class Meta:
         db_table = "user_chat_links"
