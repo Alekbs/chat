@@ -4,6 +4,8 @@ import sqlite3
 def main(page: ft.Page):
     page.title = "Routes Example"
     text_email = ft.TextField(label="email")
+    text_login = ft.TextField(label="login")
+    text_password = ft.TextField(label="password")
     #создаем бд
     connection = sqlite3.connect('chat.db')
     cursor = connection.cursor()
