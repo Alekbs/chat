@@ -1,37 +1,25 @@
-
+from handler.models import *
 
 
 def ck_login(login, passw):
-    con = sqlite3.connect('handler/users')
-    cur = con.cursor()
+    try:
+        user = User.get(User.login == login)  # Ищем пользователя по логину
+        if user.password == passw:  # Сравниваем пароль
+            return True  # Вернуть True, если пароль совпадает
+    except User.DoesNotExist:
+        pass  # Если пользователь не найден, просто пропустить
 
-    # Проверяем есть ли такой пользователь
-    cur.execute(f'SELECT * FROM users WHERE name="{login}";')
-    value = cur.fetchall()
-    
-    if value != [] and value[0][2] == passw:
-        signal.emit('Успешная авторизация!')
-    else:
-        signal.emit('Проверьте правильность ввода данных!')
-
-    cur.close()
-    con.close()
+    return False  # Вернуть False, если логин или пароль не совпадают
 
 
-def register(login, passw, signal):
-    con = sqlite3.connect('handler/users')
-    cur = con.cursor()
 
-    cur.execute(f'SELECT * FROM users WHERE name="{login}";')
-    value = cur.fetchall()
-
-    if value != []:
-        signal.emit('Такой ник уже используется!')
-
-    elif value == []:
-        cur.execute(f"INSERT INTO users (name, password) VALUES ('{login}', '{passw}')")
-        signal.emit('Вы успешно зарегистрированы!')
-        con.commit()
-
-    cur.close()
-    con.close()
+def register(login, passw, phone):
+    try:
+        print(login, passw, phone)
+        # Начинаем транзакцию для безопасной вставки
+        with db:
+            users = User(login=login, password=passw, phone=phone, avatar='1').save() # Создаем новую запись пользователя
+    except IntegrityError:
+        # Если пользователь с таким логином уже существует (уникальность нарушена)
+        return "Пользователь с таким логином уже существует."
+    return "Регистрация успешно завершена."

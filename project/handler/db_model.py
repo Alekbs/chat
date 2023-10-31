@@ -1,7 +1,8 @@
 from models import *
 
-with db:
-    db.create_tables([User, Chat, Message, UserChatLink])
 
+with db:
+    users = User.get()
+print(users.login, users.password)
 print("Done")
 
