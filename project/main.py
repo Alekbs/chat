@@ -1,5 +1,10 @@
 import flet as ft
-from handler.db_handler import *
+#from handler.db_handler import *
+import socket
+import json
+
+
+
 
 
 def main(page: ft.Page):
@@ -30,7 +35,36 @@ def main(page: ft.Page):
     def auth(e):
         login = text_login.value
         passw = text_password.value
-        if ck_login(login, passw):
+        # Создаем клиентский сокет
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # Определяем хост и порт, на котором сервер слушает
+        host = "26.153.159.45"
+        port = 8000
+
+        # Подключаемся к серверу
+        client_socket.connect((host, port))
+        # Подготавливаем данные в формате JSON
+        request_data = {
+            "function": "ck_login",
+            "username": login,
+            "password": passw
+        }
+        data = json.dumps(request_data).encode('utf-8')
+
+        # Отправляем данные серверу
+        client_socket.send(data)
+
+        # Принимаем ответ от сервера
+        response_data = client_socket.recv(1024)
+
+        # Декодируем JSON-данные
+        response = json.loads(response_data.decode('utf-8'))
+        # Закрываем клиентский сокет
+        client_socket.close()
+
+
+        if response['result']:
             page.go("/about")
         else:
             open_dlg(e, "Неправильный логин или пароль")
@@ -42,7 +76,35 @@ def main(page: ft.Page):
         login = text_login.value
         passw = text_password.value
         phone = text_phone.value
-        open_dlg(e, register(login, passw, phone))
+        # Создаем клиентский сокет
+        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        # Определяем хост и порт, на котором сервер слушает
+        host = "26.153.159.45"
+        port = 8000
+
+        # Подключаемся к серверу
+        client_socket.connect((host, port))
+        # Подготавливаем данные в формате JSON
+        request_data = {
+            "function": "register",
+            "username": login,
+            "password": passw,
+            "phone":phone
+        }
+        data = json.dumps(request_data).encode('utf-8')
+
+        # Отправляем данные серверу
+        client_socket.send(data)
+
+        # Принимаем ответ от сервера
+        response_data = client_socket.recv(1024)
+
+        # Декодируем JSON-данные
+        response = json.loads(response_data.decode('utf-8'))
+        # Закрываем клиентский сокет
+        client_socket.close()
+        open_dlg(e, response['result'])
         
        
    
@@ -173,4 +235,4 @@ def main(page: ft.Page):
     vertical_alignment=ft.CrossAxisAlignment.CENTER,
 
 
-ft.app(port=64914, target=main)
+ft.app(target=main)

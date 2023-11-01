@@ -1,7 +1,7 @@
 from peewee import *
 
 #указываем базу данных
-db = SqliteDatabase("project/handler/chat.db")
+db = SqliteDatabase("C:/Users/aleks/Documents/work/chat/project/handler/chat.db")
 
 class BaseModel(Model):
     id = PrimaryKeyField(unique=True)
