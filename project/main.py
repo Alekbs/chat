@@ -1,10 +1,8 @@
 import flet as ft
-#from handler.db_handler import *
+
+# from handler.db_handler import *
 import socket
 import json
-
-
-
 
 
 def main(page: ft.Page):
@@ -12,16 +10,15 @@ def main(page: ft.Page):
     text_phone = ft.TextField(label="phone")
     text_login = ft.TextField(label="login")
     text_password = ft.TextField(label="password")
-    dlg = ft.AlertDialog(
-        on_dismiss=lambda e: print("Dialog dismissed!")
-    )
+    dlg = ft.AlertDialog(on_dismiss=lambda e: print("Dialog dismissed!"))
+
     def open_dlg(e, msg):
         dlg.title = ft.Text(msg)
         page.dialog = dlg
         dlg.open = True
         page.update()
 
-    '''# Проверка правильности ввода
+    """# Проверка правильности ввода
     def check_input(funct):
         def wrapper(self):
             for line_edit in self.base_line_edit:
@@ -29,9 +26,9 @@ def main(page: ft.Page):
                     return
             funct(self)
         return wrapper
-'''
+"""
 
-    #@check_input
+    # @check_input
     def auth(e):
         login = text_login.value
         passw = text_password.value
@@ -39,18 +36,14 @@ def main(page: ft.Page):
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
         # Определяем хост и порт, на котором сервер слушает
-        host = "26.153.159.45"
+        host = input("Введите ip: ")
         port = 8000
 
         # Подключаемся к серверу
         client_socket.connect((host, port))
         # Подготавливаем данные в формате JSON
-        request_data = {
-            "function": "ck_login",
-            "username": login,
-            "password": passw
-        }
-        data = json.dumps(request_data).encode('utf-8')
+        request_data = {"function": "ck_login", "username": login, "password": passw}
+        data = json.dumps(request_data).encode("utf-8")
 
         # Отправляем данные серверу
         client_socket.send(data)
@@ -59,19 +52,16 @@ def main(page: ft.Page):
         response_data = client_socket.recv(1024)
 
         # Декодируем JSON-данные
-        response = json.loads(response_data.decode('utf-8'))
+        response = json.loads(response_data.decode("utf-8"))
         # Закрываем клиентский сокет
         client_socket.close()
 
-
-        if response['result']:
+        if response["result"]:
             page.go("/about")
         else:
             open_dlg(e, "Неправильный логин или пароль")
 
-
-
-    #@check_input
+    # @check_input
     def reg(e):
         login = text_login.value
         passw = text_password.value
@@ -90,9 +80,9 @@ def main(page: ft.Page):
             "function": "register",
             "username": login,
             "password": passw,
-            "phone":phone
+            "phone": phone,
         }
-        data = json.dumps(request_data).encode('utf-8')
+        data = json.dumps(request_data).encode("utf-8")
 
         # Отправляем данные серверу
         client_socket.send(data)
@@ -101,58 +91,51 @@ def main(page: ft.Page):
         response_data = client_socket.recv(1024)
 
         # Декодируем JSON-данные
-        response = json.loads(response_data.decode('utf-8'))
+        response = json.loads(response_data.decode("utf-8"))
         # Закрываем клиентский сокет
         client_socket.close()
-        open_dlg(e, response['result'])
-        
-       
-   
+        open_dlg(e, response["result"])
+
     def route_change(route):
         page.views.clear()
 
         page.views.append(
             ft.View(
-                
                 "/login",
                 [
                     ft.AppBar(title=ft.Text("Вход"), bgcolor=ft.colors.SURFACE_VARIANT),
                     ft.Row(
                         vertical_alignment=ft.MainAxisAlignment.CENTER,
-
                         alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
                             text_login,
-                        ]
+                        ],
                     ),
                     ft.Row(
                         vertical_alignment=ft.MainAxisAlignment.CENTER,
-
                         alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
                             text_password,
-                        ]
+                        ],
                     ),
                     ft.Row(
-                        
                         alignment=ft.MainAxisAlignment.CENTER,
                         vertical_alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
-                            ft.ElevatedButton(
-                                "Log in", on_click= auth
-                            ),
+                            ft.ElevatedButton("Log in", on_click=auth),
                             ft.ElevatedButton(
                                 "Sign up", on_click=lambda _: page.go("/signup")
                             ),
-                        ]
+                        ],
                     ),
                     ft.Row(
                         alignment=ft.MainAxisAlignment.CENTER,
                         controls=[
-                            ft.ElevatedButton("About us", on_click=lambda _: page.go("/about")),
-                        ]
-                    )
-                    
+                            ft.ElevatedButton(
+                                "About us", on_click=lambda _: page.go("/about")
+                            ),
+                        ],
+                    ),
                 ],
             )
         )
@@ -161,36 +144,34 @@ def main(page: ft.Page):
                 ft.View(
                     "/signup",
                     [
-                        
-                        ft.AppBar(title=ft.Text("Регистрация"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.AppBar(
+                            title=ft.Text("Регистрация"),
+                            bgcolor=ft.colors.SURFACE_VARIANT,
+                        ),
                         ft.Row(
                             alignment=ft.MainAxisAlignment.CENTER,
                             controls=[
                                 text_phone,
-                            ]
+                            ],
                         ),
                         ft.Row(
                             alignment=ft.MainAxisAlignment.CENTER,
                             controls=[
                                 text_login,
-                            ]
+                            ],
                         ),
                         ft.Row(
                             alignment=ft.MainAxisAlignment.CENTER,
                             controls=[
                                 text_password,
-                            ]
+                            ],
                         ),
                         ft.Row(
                             alignment=ft.MainAxisAlignment.CENTER,
                             controls=[
-                                ft.ElevatedButton(
-                                    "Confirm", on_click=reg
-                                ),
-                            ]
-
-                        )
-                        
+                                ft.ElevatedButton("Confirm", on_click=reg),
+                            ],
+                        ),
                     ],
                 )
             )
@@ -225,14 +206,13 @@ def main(page: ft.Page):
         page.views.pop()
         top_view = page.views[-1]
         page.go(top_view.route)
-    
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     page.go(page.route)
     page.window_center()
-    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+    alignment = (ft.MainAxisAlignment.SPACE_BETWEEN,)
+    vertical_alignment = (ft.CrossAxisAlignment.CENTER,)
 
 
 ft.app(target=main)

@@ -2,6 +2,7 @@ from models import *
 import socket
 import json
 
+
 def ck_login(login, passw):
     print(f"{type(login)} : {login}, {type(passw)} : {passw}")
     try:
@@ -14,17 +15,19 @@ def ck_login(login, passw):
     return False  # Вернуть False, если логин или пароль не совпадают
 
 
-
 def register(login, passw, phone):
     try:
         print(login, passw, phone)
         # Начинаем транзакцию для безопасной вставки
         with db:
-            users = User(login=login, password=passw, phone=phone, avatar='1').save() # Создаем новую запись пользователя
+            users = User(
+                login=login, password=passw, phone=phone, avatar="1"
+            ).save()  # Создаем новую запись пользователя
     except IntegrityError:
         # Если пользователь с таким логином уже существует (уникальность нарушена)
         return "Пользователь с таким логином уже существует."
     return "Регистрация успешно завершена."
+
 
 print(ck_login("admin", "1234"))
 # Создаем серверный сокет
@@ -54,7 +57,7 @@ while True:
         break
 
     # Декодируем JSON-данные от клиента
-    request_data = json.loads(data.decode('utf-8'))
+    request_data = json.loads(data.decode("utf-8"))
 
     # Определяем, какую функцию вызывать
     function_name = request_data.get("function")
@@ -74,7 +77,7 @@ while True:
         result = "Неизвестная функция"
 
     # Отправляем результат обратно клиенту
-    response_data = json.dumps({"result": result}).encode('utf-8')
+    response_data = json.dumps({"result": result}).encode("utf-8")
     client_socket.send(response_data)
 
     # Закрываем соединение с клиентом
